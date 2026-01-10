@@ -26,6 +26,8 @@ public class Room {
     private String description;
     private String image;
     private Double taux;
+    private Double lit_long;
+    private Double lit_large;
 
     public Integer getId() {
         return id;
@@ -80,6 +82,22 @@ public class Room {
     }
     public void setTaux(Double taux) {
         this.taux = taux;
+    }
+
+    public Double getLit_long() {
+        return lit_long;
+    }
+
+    public void setLit_long(Double lit_long) {
+        this.lit_long = lit_long;
+    }
+
+    public Double getLit_large() {
+        return lit_large;
+    }
+
+    public void setLit_large(Double lit_large) {
+        this.lit_large = lit_large;
     }
 }
 

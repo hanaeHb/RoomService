@@ -53,6 +53,8 @@ public class RoomService {
             room.setDescription(dto.getDescription());
             room.setImage(dto.getImage());
             room.setTaux(dto.getTaux());
+            room.setLit_long(dto.getLit_long());
+            room.setLit_large(dto.getLit_large());
             Room updatedRoom = roomRepository.save(room); // update in DB
             return RoomMapper.entityToDto(updatedRoom);
         }

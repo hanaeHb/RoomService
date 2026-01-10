@@ -19,6 +19,8 @@ public class RoomMapper {
         room.setDescription(dto.getDescription());
         room.setImage(dto.getImage());
         room.setTaux(dto.getTaux());
+        room.setLit_large(dto.getLit_large());
+        room.setLit_long(dto.getLit_long());
         return room;
     }
 
@@ -32,6 +34,8 @@ public class RoomMapper {
         dto.setDescription(entity.getDescription());
         dto.setImage(entity.getImage());
         dto.setTaux(entity.getTaux());
+        dto.setLit_large(entity.getLit_large());
+        dto.setLit_long(entity.getLit_long());
         return dto;
     }
 }

@@ -7,6 +7,7 @@ import com.example.roomservice.Config.RsaKeys;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,9 @@ public class RoomController {
         this.roomService = roomService;
     }
 
+    @Value("${upload.dir}")
+    private String uploadDir;
+
     @PostMapping("/upload")
     public ResponseEntity<String> uploadRoomImage(@RequestParam("file") MultipartFile file) {
 
@@ -39,19 +43,17 @@ public class RoomController {
         }
 
         try {
-            // Folder li ghadi tstore fih images
-            String uploadDir = "uploads/";
-            Path path = Paths.get(uploadDir + file.getOriginalFilename());
+            Path path = Paths.get(uploadDir, file.getOriginalFilename());
             Files.createDirectories(path.getParent());
             Files.write(path, file.getBytes());
 
-            // URL li Angular tdisplaya
             String imageUrl = "/uploads/" + file.getOriginalFilename();
             return ResponseEntity.ok(imageUrl);
 
         } catch (IOException e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving file");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error saving file");
         }
     }
 

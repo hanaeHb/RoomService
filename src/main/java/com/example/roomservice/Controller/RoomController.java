@@ -56,6 +56,7 @@ public class RoomController {
     }
 
     // ================= GET ALL ROOMS (any USER) =================
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
     public ResponseEntity<List<ResponseDtoRoom>> getAllRooms() {
         List<ResponseDtoRoom> rooms = roomService.getAllRooms();
@@ -63,6 +64,7 @@ public class RoomController {
     }
 
     // ================= GET ROOM BY ID (any USER) =================
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDtoRoom> getRoomById(@PathVariable int id) {
         ResponseDtoRoom room = roomService.getRoomById(id);
@@ -165,4 +167,43 @@ public class RoomController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
+    // GET ROOM BY NUMERO (any user)
+    @GetMapping("/numero/{numero}")
+    public ResponseEntity<ResponseDtoRoom> getRoomByNumero(@PathVariable String numero) {
+        ResponseDtoRoom room = roomService.getAllRooms()
+                .stream()
+                .filter(r -> String.valueOf(r.getNumero()).trim().equals(numero.trim()))
+                .findFirst()
+                .orElse(null);
+
+        if (room != null) {
+            return ResponseEntity.ok(room);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    // GET rooms by prix (any user)
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/prix/{prix}")
+    public ResponseEntity<List<ResponseDtoRoom>> getRoomsByPrix(@PathVariable double prix) {
+        List<ResponseDtoRoom> rooms = roomService.getAllRooms()
+                .stream()
+                .filter(r -> r.getPrix() >= prix)
+                .toList();
+        return ResponseEntity.ok(rooms);
+    }
+
+    // GET rooms by type (any user)
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/type/{type}")
+    public ResponseEntity<List<ResponseDtoRoom>> getRoomsByType(@PathVariable String type) {
+        List<ResponseDtoRoom> rooms = roomService.getAllRooms()
+                .stream()
+                .filter(r -> r.getType().equalsIgnoreCase(type))
+                .toList();
+        return ResponseEntity.ok(rooms);
+    }
+
 }

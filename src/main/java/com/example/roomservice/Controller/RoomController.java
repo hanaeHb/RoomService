@@ -101,7 +101,7 @@ public class RoomController {
     @PostMapping
     public ResponseEntity<ResponseDtoRoom> createRoom(
             @RequestHeader("Authorization") String authHeader,
-            @RequestBody RequestDtoRoom dto) {
+            @RequestBody RequestDtoRoom dto){
 
         if (!isManager(authHeader)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -116,7 +116,7 @@ public class RoomController {
     public ResponseEntity<ResponseDtoRoom> updateRoom(
             @RequestHeader("Authorization") String authHeader,
             @PathVariable int id,
-            @RequestBody RequestDtoRoom dto) {
+            @RequestBody RequestDtoRoom dto){
 
         if (!isManager(authHeader)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);

@@ -6,7 +6,10 @@ import com.example.roomservice.Mapper.RoomMapper;
 import com.example.roomservice.Repository.RoomReposiitory;
 import com.example.roomservice.entity.Room;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,6 +18,7 @@ import java.util.stream.Collectors;
 public class RoomService {
 
     private final RoomReposiitory roomRepository;
+    private final String uploadDir = "uploads/";
 
     public RoomService(RoomReposiitory roomRepository) {
         this.roomRepository = roomRepository;
@@ -34,15 +38,29 @@ public class RoomService {
         return room.map(RoomMapper::entityToDto).orElse(null);
     }
 
+    // Save file locally and return filename
+
+    private String saveFile(MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty()) return null;
+
+        File folder = new File(uploadDir);
+        if (!folder.exists()) folder.mkdirs();
+
+        String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        File dest = new File(folder, filename);
+        file.transferTo(dest); // save file
+        return filename;
+    }
+
     // Create new room
-    public ResponseDtoRoom createRoom(RequestDtoRoom dto) {
+    public ResponseDtoRoom createRoom(RequestDtoRoom dto){
         Room room = RoomMapper.dtoToEntity(dto);
         Room savedRoom = roomRepository.save(room); // save in DB
         return RoomMapper.entityToDto(savedRoom);
     }
 
     // Update room
-    public ResponseDtoRoom updateRoom(int id, RequestDtoRoom dto) {
+    public ResponseDtoRoom updateRoom(int id, RequestDtoRoom dto){
         Optional<Room> roomOpt = roomRepository.findById(id);
         if (roomOpt.isPresent()) {
             Room room = roomOpt.get();

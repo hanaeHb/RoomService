@@ -102,6 +102,53 @@ public class RoomController {
         }
     }
 
+    // RECEPTIONIST
+    private boolean isReceptionist(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) return false;
+
+        String token = authHeader.substring(7); // remove "Bearer "
+
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(rsaKeys.publicKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            Object rolesObj = claims.get("roles");
+            if (rolesObj instanceof java.util.List<?> rolesList) {
+                return rolesList.contains("RECEPTIONNISTE");
+            }
+
+            return false;
+        } catch (Exception e) {
+            return false; // token invalid or expired
+        }
+    }
+
+    // HOUSEKEEPING
+    private boolean isHousekeeping(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) return false;
+
+        String token = authHeader.substring(7); // remove "Bearer "
+
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(rsaKeys.publicKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            Object rolesObj = claims.get("roles");
+            if (rolesObj instanceof java.util.List<?> rolesList) {
+                return rolesList.contains("HOUSEKEEPING");
+            }
+
+            return false;
+        } catch (Exception e) {
+            return false; // token invalid or expired
+        }
+    }
     // ================= CREATE ROOM (MANAGER only) =================
     @PostMapping
     public ResponseEntity<ResponseDtoRoom> createRoom(
@@ -153,13 +200,13 @@ public class RoomController {
         }
     }
 
-    // ================= TOGGLE ROOM STATE (MANAGER only) =================
+    // ================= TOGGLE ROOM STATE (Receptionist et manager only) =================
     @PatchMapping("/{id}/etat")
     public ResponseEntity<ResponseDtoRoom> toggleRoomState(
             @RequestHeader("Authorization") String authHeader,
             @PathVariable int id) {
 
-        if (!isManager(authHeader)) {
+        if (!isReceptionist(authHeader) && !isManager(authHeader)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
 

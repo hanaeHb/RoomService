@@ -94,7 +94,7 @@ public class RoomService {
         Optional<Room> roomOpt = roomRepository.findById(id);
         if (roomOpt.isPresent()) {
             Room room = roomOpt.get();
-            room.setEtat(room.getEtat().equalsIgnoreCase("libre") ? "occupée" : "libre");
+            room.setEtat(room.getEtat().equalsIgnoreCase("Disponible") ? "Occupée" : "Disponible");
             Room updatedRoom = roomRepository.save(room); // save change in DB
             return RoomMapper.entityToDto(updatedRoom);
         }

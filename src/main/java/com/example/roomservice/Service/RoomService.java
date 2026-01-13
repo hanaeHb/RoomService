@@ -2,6 +2,7 @@ package com.example.roomservice.Service;
 
 import com.example.roomservice.DTO.RequestDtoRoom;
 import com.example.roomservice.DTO.ResponseDtoRoom;
+import com.example.roomservice.DTO.RoomStatsDto;
 import com.example.roomservice.Mapper.RoomMapper;
 import com.example.roomservice.Repository.RoomReposiitory;
 import com.example.roomservice.entity.Room;
@@ -99,4 +100,46 @@ public class RoomService {
         }
         return null;
     }
+
+
+    // pour statistique de admin
+    public RoomStatsDto getRoomStatistics() {
+
+        List<Room> rooms = roomRepository.findAll();
+
+        RoomStatsDto stats = new RoomStatsDto();
+
+        stats.setTotalRooms(rooms.size());
+
+        stats.setAvailableRooms(
+                rooms.stream().filter(r -> r.getEtat().equalsIgnoreCase("Disponible")).count()
+        );
+
+        stats.setOccupiedRooms(
+                rooms.stream().filter(r -> r.getEtat().equalsIgnoreCase("Occupée")).count()
+        );
+
+        stats.setMaintenanceRooms(
+                rooms.stream().filter(r -> r.getEtat().equalsIgnoreCase("Maintenance")).count()
+        );
+
+        stats.setSingleRooms(
+                rooms.stream().filter(r -> r.getType().equalsIgnoreCase("Single")).count()
+        );
+
+        stats.setDoubleRooms(
+                rooms.stream().filter(r -> r.getType().equalsIgnoreCase("Double")).count()
+        );
+
+        stats.setSuiteRooms(
+                rooms.stream().filter(r -> r.getType().equalsIgnoreCase("Suite")).count()
+        );
+
+        stats.setAveragePrice(
+                rooms.stream().mapToDouble(Room::getPrix).average().orElse(0)
+        );
+
+        return stats;
+    }
+
 }

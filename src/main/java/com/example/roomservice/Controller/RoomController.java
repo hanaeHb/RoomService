@@ -2,6 +2,7 @@ package com.example.roomservice.Controller;
 
 import com.example.roomservice.DTO.RequestDtoRoom;
 import com.example.roomservice.DTO.ResponseDtoRoom;
+import com.example.roomservice.DTO.RoomStatsDto;
 import com.example.roomservice.Service.RoomService;
 import com.example.roomservice.Config.RsaKeys;
 import io.jsonwebtoken.Claims;
@@ -206,6 +207,46 @@ public class RoomController {
                 .filter(r -> r.getType().equalsIgnoreCase(type))
                 .toList();
         return ResponseEntity.ok(rooms);
+    }
+
+
+
+
+
+
+
+    @GetMapping("/stats")
+    public ResponseEntity<RoomStatsDto> getRoomStats(
+            @RequestHeader("Authorization") String authHeader) {
+
+        if (!isAdmin(authHeader)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        return ResponseEntity.ok(roomService.getRoomStatistics());
+    }
+
+    private boolean isAdmin(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) return false;
+
+        String token = authHeader.substring(7); // remove "Bearer "
+
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(rsaKeys.publicKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            Object rolesObj = claims.get("roles");
+            if (rolesObj instanceof java.util.List<?> rolesList) {
+                return rolesList.contains("ADMIN");
+            }
+
+            return false;
+        } catch (Exception e) {
+            return false; // token invalid or expired
+        }
     }
 
 }

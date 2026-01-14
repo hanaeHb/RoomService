@@ -201,22 +201,15 @@ public class RoomController {
     }
 
     // ================= TOGGLE ROOM STATE (Receptionist et manager only) =================
-    @PatchMapping("/{id}/etat")
-    public ResponseEntity<ResponseDtoRoom> toggleRoomState(
+    @PatchMapping("/{id}/etat/{etat}")
+    public ResponseDtoRoom toggleRoomState(
             @RequestHeader("Authorization") String authHeader,
-            @PathVariable int id) {
-
-        if (!isReceptionist(authHeader) && !isManager(authHeader)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        }
-
-        ResponseDtoRoom room = roomService.toggleRoomState(id);
-        if (room != null) {
-            return ResponseEntity.ok(room);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+            @PathVariable int id,
+            @PathVariable String etat) {
+        return roomService.setRoomEtat(id, etat);
     }
+
+
 
     // GET ROOM BY NUMERO (any user)
     @GetMapping("/numero/{numero}")

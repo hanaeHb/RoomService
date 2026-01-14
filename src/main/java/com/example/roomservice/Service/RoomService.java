@@ -89,18 +89,17 @@ public class RoomService {
         return false;
     }
 
-    // Change room state (libre <-> occupée)
-    public ResponseDtoRoom toggleRoomState(int id) {
+    // Change room state (Disponible <-> occupée)
+    public ResponseDtoRoom setRoomEtat(int id, String etat) {
         Optional<Room> roomOpt = roomRepository.findById(id);
         if (roomOpt.isPresent()) {
             Room room = roomOpt.get();
-            room.setEtat(room.getEtat().equalsIgnoreCase("Disponible") ? "Occupée" : "Disponible");
-            Room updatedRoom = roomRepository.save(room); // save change in DB
+            room.setEtat(etat); //
+            Room updatedRoom = roomRepository.save(room);
             return RoomMapper.entityToDto(updatedRoom);
         }
         return null;
     }
-
 
     // pour statistique de admin
     public RoomStatsDto getRoomStatistics() {
